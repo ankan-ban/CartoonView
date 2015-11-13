@@ -1,0 +1,81 @@
+precision mediump float;
+varying vec2 vTextureCoord;
+uniform sampler2D sTexture;
+uniform vec2 uTexSize;
+
+
+void main() {
+	// TODO: pass these in a CB instead of hardcoding them here :(
+  	float pixelWidth = 1.0/uTexSize.x;
+  	float pixelHeight = 1.0/uTexSize.y;
+  
+	float NW = texture2D(sTexture, vec2(vTextureCoord.x - pixelWidth, vTextureCoord.y - pixelHeight)).x;
+	float N  = texture2D(sTexture, vec2(vTextureCoord.x - pixelWidth, vTextureCoord.y              )).x;
+	float NE = texture2D(sTexture, vec2(vTextureCoord.x - pixelWidth, vTextureCoord.y + pixelHeight)).x;
+	float W  = texture2D(sTexture, vec2(vTextureCoord.x             , vTextureCoord.y - pixelHeight)).x;
+	float E  = texture2D(sTexture, vec2(vTextureCoord.x             , vTextureCoord.y + pixelHeight)).x;
+	float SW = texture2D(sTexture, vec2(vTextureCoord.x + pixelWidth, vTextureCoord.y - pixelHeight)).x;
+	float S  = texture2D(sTexture, vec2(vTextureCoord.x + pixelWidth, vTextureCoord.y              )).x;
+	float SE = texture2D(sTexture, vec2(vTextureCoord.x + pixelWidth, vTextureCoord.y + pixelHeight)).x;
+	
+	float Gx = -1.0*NW + 1.0*NE -2.0*W + 2.0*E -1.0*SW + 1.0*SE;
+	float Gy = -1.0*NW -2.0*N -1.0*NE + 1.0*SW + 2.0*S + 1.0*SE;
+	
+	float G = abs(Gx) + abs(Gy);
+	
+	float sum = G;
+	
+	if(sum < 0.15) sum = 0.0;	// reduces noise
+	
+	sum = 1.0 - sum;			// black on white looks much better than white on black
+	
+	gl_FragColor = vec4(sum, sum, sum, 1.0);
+	
+	// for testing
+	//gl_FragColor  = texture2D(sTexture, vec2(vTextureCoord.x , vTextureCoord.y));
+	
+}
+
+
+// sobel filter (orignal shader for color image)
+/*
+void main() {
+	// TODO: pass these in a CB instead of hardcoding them here :(
+  	float pixelWidth = 1.0/800.0;
+  	float pixelHeight = 1.0/480.0;
+  
+	vec4 NW = texture2D(sTexture, vec2(vTextureCoord.x - pixelWidth, vTextureCoord.y - pixelHeight));
+	vec4 N  = texture2D(sTexture, vec2(vTextureCoord.x - pixelWidth, vTextureCoord.y              ));
+	vec4 NE = texture2D(sTexture, vec2(vTextureCoord.x - pixelWidth, vTextureCoord.y + pixelHeight));
+	vec4 W  = texture2D(sTexture, vec2(vTextureCoord.x             , vTextureCoord.y - pixelHeight));
+	vec4 E  = texture2D(sTexture, vec2(vTextureCoord.x             , vTextureCoord.y + pixelHeight));
+	vec4 SW = texture2D(sTexture, vec2(vTextureCoord.x + pixelWidth, vTextureCoord.y - pixelHeight));
+	vec4 S  = texture2D(sTexture, vec2(vTextureCoord.x + pixelWidth, vTextureCoord.y              ));
+	vec4 SE = texture2D(sTexture, vec2(vTextureCoord.x + pixelWidth, vTextureCoord.y + pixelHeight));
+	
+	vec4 Gx = -1.0*NW + 1.0*NE -2.0*W + 2.0*E -1.0*SW + 1.0*SE;
+	vec4 Gy = -1.0*NW -2.0*N -1.0*NE + 1.0*SW + 2.0*S + 1.0*SE;
+	
+	vec4 G = abs(Gx) + abs(Gy);
+	
+	float sum = (G.x + G.y + G.z)/3.0;	// black and white (actually greyscale) image looks much better :)
+	
+	if(sum < 0.15) sum = 0.0;	// reduces noise
+	
+	sum = 1.0 - sum;			// black on white looks much better than white on black
+	
+	//gl_FragColor = vec4(sum, sum, sum, 1.0);
+	
+	// for testing
+	gl_FragColor  = texture2D(sTexture, vec2(vTextureCoord.x , vTextureCoord.y));
+	
+}
+*/
+
+
+
+/*
+  gl_FragColor = texture2D(sTexture, vTextureCoord);
+  gl_FragColor *= vec4(2.0, 2.0, 2.0, 1.0);
+  //gl_FragColor += vec4(0.0, 0.3, 0.0, 1.0);
+ */

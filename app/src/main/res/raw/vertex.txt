@@ -1,0 +1,22 @@
+// constants
+uniform mat4 uMVPMatrix; 
+uniform int  uTexInv;
+
+// input attributes
+attribute vec4 aPosition; 
+attribute vec2 aTextureCoord; 
+
+// outputs
+varying vec2 vTextureCoord; 
+
+// entry point of the shader
+void main() {
+
+  gl_Position = uMVPMatrix * aPosition;
+  if (uTexInv != 0)
+  {
+      gl_Position.x = gl_Position.x*(-1.0);
+  }
+
+  vTextureCoord = aTextureCoord; 
+}
