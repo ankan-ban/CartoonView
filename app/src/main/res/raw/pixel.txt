@@ -5,7 +5,6 @@ uniform vec2 uTexSize;
 
 
 void main() {
-	// TODO: pass these in a CB instead of hardcoding them here :(
   	float pixelWidth = 1.0/uTexSize.x;
   	float pixelHeight = 1.0/uTexSize.y;
   

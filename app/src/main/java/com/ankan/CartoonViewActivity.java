@@ -71,6 +71,8 @@ public class CartoonViewActivity extends Activity
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        // don't dim the screen
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Display display = getWindowManager().getDefaultDisplay();
         screenWidth = display.getWidth();
